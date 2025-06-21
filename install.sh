@@ -3,11 +3,18 @@
 # 机场一键安全防护脚本
 # 快速启用/关闭所有必要的安全防护措施
 
+# 获取脚本名称
+get_script_name() {
+    local script_name=$(basename "${BASH_SOURCE[0]}" 2>/dev/null || basename "$0" 2>/dev/null || echo "quick_protect.sh")
+    echo "$script_name"
+}
+
 # 显示使用说明
 show_usage() {
+    local script_name=$(get_script_name)
     echo "🛡️  机场一键安全防护脚本"
     echo ""
-    echo "用法: $0 [选项]"
+    echo "用法: ./$script_name [选项]"
     echo ""
     echo "选项:"
     echo "  on      启用安全防护（默认）"
@@ -16,16 +23,16 @@ show_usage() {
     echo "  help    显示帮助信息"
     echo ""
     echo "示例:"
-    echo "  $0 on       # 启用防护"
-    echo "  $0 off      # 关闭防护"
-    echo "  $0 status   # 查看状态"
+    echo "  ./$script_name on       # 启用防护"
+    echo "  ./$script_name off      # 关闭防护"
+    echo "  ./$script_name status   # 查看状态"
     echo ""
 }
 
 # 检查权限
-check_permissions() {
+    check_permissions() {
     if [ "$EUID" -ne 0 ]; then
-        echo "❌ 请使用root权限运行此脚本: sudo $0"
+        echo "❌ 请使用root权限运行此脚本: sudo ./$(get_script_name)"
         exit 1
     fi
 }
@@ -111,7 +118,7 @@ disable_protection() {
     echo "   • 常见攻击端口防护"
     echo ""
     echo "🚨 警告：您的服务器现在更容易被恶意用户滥用！"
-    echo "💡 建议运行 '$0 on' 重新启用防护"
+    echo "💡 建议运行 './$(get_script_name) on' 重新启用防护"
 }
 
 # 查看防护状态
@@ -197,23 +204,23 @@ case "$ACTION" in
         enable_protection
         echo ""
         echo "📋 管理命令："
-        echo "   查看状态: $0 status"
-        echo "   关闭防护: $0 off"
+        echo "   查看状态: ./$(get_script_name) status"
+        echo "   关闭防护: ./$(get_script_name) off"
         ;;
     "off"|"disable"|"stop")
         check_permissions
         disable_protection
         echo ""
         echo "📋 管理命令："
-        echo "   查看状态: $0 status"
-        echo "   启用防护: $0 on"
+        echo "   查看状态: ./$(get_script_name) status"
+        echo "   启用防护: ./$(get_script_name) on"
         ;;
     "status"|"show")
         show_status
         echo ""
         echo "📋 管理命令："
-        echo "   启用防护: $0 on"
-        echo "   关闭防护: $0 off"
+        echo "   启用防护: ./$(get_script_name) on"
+        echo "   关闭防护: ./$(get_script_name) off"
         ;;
     "help"|"-h"|"--help")
         show_usage
